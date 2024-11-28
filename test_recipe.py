@@ -3,8 +3,8 @@
 import recipe_handler as rh
 import json
 
-test_read = '../test_recipe.csv'
-test_write = '../test_recipe_opt.csv'
+test_read = 'test_recipe.csv'
+test_write = 'test_recipe_opt.csv'
 
 a = open('meal_params.json')
 contents = a.read()
