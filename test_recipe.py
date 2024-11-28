@@ -3,9 +3,6 @@
 import recipe_handler as rh
 import json
 
-test_read = 'test_recipe.csv'
-test_write = 'test_recipe_opt.csv'
-
 a = open('meal_params.json')
 contents = a.read()
 mparams=json.loads(contents)
@@ -36,7 +33,7 @@ print('\nAfter Stats:')
 print(recdf)
 rec_stats = rh.get_recipe_statistics(recdf,save_file='recipe_statistics.txt')
 
-rh.write_recipe(recdf,test_write)
+rh.write_recipe(recdf,mparams["output_recipe"])
 
 #outfile.write(str(rec_stats))
 #outfile.close()
