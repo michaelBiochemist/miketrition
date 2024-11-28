@@ -1,0 +1,9 @@
+{
+	"total_calories":              500,
+	"meal_size_in_grams":          600,
+	"ratio_calories_from_protein": 0.4,
+	"ratio_calories_from_carbs":   0.4,
+	"ratio_calories_from_fat":     0.2,
+	"input_recipe":                "test_recipe.csv",
+	"output_recipe":               "test_recipe_opt.csv"
+}

@@ -7,14 +7,16 @@ from scipy.optimize import minimize
 recipe_dir = 'recipes/'
 
 nutdf = pd.read_csv('nutritiondb.csv',header=0, names=['name','servsize','servcals','prot','carb','fat'])
+nutdf.name = nutdf.name.str.upper()
 nutdf['density'] = nutdf.servcals / nutdf.servsize # Get density in calories per gram
 calorie_per_gram = {'carbs':4,'protein':4,'fat':9}
 
 def read_recipe(recipe_file):
-    recdf = pd.read_csv(recipe_dir+recipe_file,header=0,names=['ingredient','mass'])
+    recdf = pd.read_csv(recipe_file,header=0,names=['ingredient','mass'])
+    recdf.ingredient = recdf.ingredient.str.upper()
     return recdf
 
-def get_recipe_statistics(recipe_df,print_result=True):
+def get_recipe_statistics(recipe_df,print_result=True, save_file=None):
     merged_df = pd.merge(recipe_df, nutdf, left_on='ingredient', right_on='name')
     total_mass = merged_df['mass'].sum()
     total_calories = (merged_df['mass']*merged_df['density']).sum()
@@ -24,12 +26,19 @@ def get_recipe_statistics(recipe_df,print_result=True):
     total_macros = total_prot + total_carb + total_fat
     macro_ratio = ratio_to_cals([total_prot / total_macros, total_carb / total_macros, total_fat / total_macros])
 
+    names = ["Total Mass", "Total Calories", "Total Protein (g)", "Total Carbs (g)", "Total Fat (g)"]
     if print_result:
-        names = ["Total Mass", "Total Calories", "Total Protein (g)", "Total Carbs (g)", "Total Fat (g)"]
         for i,j in zip(names, [total_mass, total_calories, total_prot, total_carb, total_fat, total_macros]):
             print("%s%4.0f" % (i.ljust(18), j))
         print("\nMacro Ratio %4s %7s %7s" % ("P","C","F"))
         print("%16.2f%8.2f%8.2f" % (macro_ratio[0],macro_ratio[1],macro_ratio[2]))
+    if type(save_file) != type(None):
+        outfile = open(save_file,'a')
+        for i,j in zip(names, [total_mass, total_calories, total_prot, total_carb, total_fat, total_macros]):
+            outfile.write("\n%s%4.0f" % (i.ljust(18), j))
+        outfile.write("\nMacro Ratio %4s %7s %7s" % ("P","C","F"))
+        outfile.write("\n%16.2f%8.2f%8.2f" % (macro_ratio[0],macro_ratio[1],macro_ratio[2]))
+        outfile.close()
 
     return {"total_mass":total_mass, "total_calories":total_calories, "total_prot":total_prot, "total_carbs":total_carb, "total_fat":total_fat, "total_macros":total_macros, "macro_ratio":macro_ratio}
 
@@ -95,11 +104,11 @@ def optimize_recipe(recipe_df, target_cals, macro_ratio, total_mass=None):
     return recipe_df
 
 def write_recipe(recipe_df,file_name):
-    recipe_df.to_csv(recipe_dir + file_name,index=False,float_format="%.1f")
+    recipe_df.to_csv(file_name,index=False,float_format="%.1f")
 
 # Example usage:
 def test():
-    recipe_df = read_recipe("chicken_potato_salad.csv")
+    recipe_df = read_recipe("recipes/chicken_potato_salad.csv")
     recipe_df = optimize_recipe(recipe_df, 500, [0.4,0.4,0.2],450)
     recipe_df.mass = recipe_df.optimized_mass
     if 'optimized_mass' in recipe_df.keys():
@@ -107,7 +116,7 @@ def test():
     print(recipe_df)
     print("\n")
     get_recipe_statistics(recipe_df)
-    write_recipe(recipe_df,"chicken_potato_salad_opt.csv")
+    write_recipe(recipe_df,"recipes/chicken_potato_salad_opt.csv")
     return recipe_df
 
 if __name__ == "__main__":
