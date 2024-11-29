@@ -1,0 +1,19 @@
+Before Stats; from file test_recipe.csv:
+
+Total Mass         482
+Total Calories     538
+Total Protein (g)   49
+Total Carbs (g)     51
+Total Fat (g)       17
+Macro Ratio    P       C       F
+            0.36    0.37    0.27
+
+After Stats:
+
+Total Mass         600
+Total Calories     500
+Total Protein (g)   52
+Total Carbs (g)     52
+Total Fat (g)       11
+Macro Ratio    P       C       F
+            0.40    0.40    0.20
